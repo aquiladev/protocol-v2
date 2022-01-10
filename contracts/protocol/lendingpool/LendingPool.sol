@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.6.12;
+pragma solidity 0.7.6;
 pragma experimental ABIEncoderV2;
 
 import {SafeMath} from '../../dependencies/openzeppelin/contracts/SafeMath.sol';
@@ -48,6 +48,9 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   using WadRayMath for uint256;
   using PercentageMath for uint256;
   using SafeERC20 for IERC20;
+  using ReserveLogic for DataTypes.ReserveData;
+  using ReserveConfiguration for DataTypes.ReserveConfigurationMap;
+  using UserConfiguration for DataTypes.UserConfigurationMap;
 
   uint256 public constant LENDINGPOOL_REVISION = 0x2;
 
@@ -87,7 +90,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     _addressesProvider = provider;
     _maxStableRateBorrowSizePercent = 2500;
     _flashLoanPremiumTotal = 9;
-    _maxNumberOfReserves = UserConfiguration._maxReserves;
+    _maxNumberOfReserves = 128;
   }
 
   /**
@@ -859,7 +862,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address oracle = _addressesProvider.getPriceOracle();
 
     uint256 amountInETH =
-      IPriceOracleGetter(oracle).getAssetPrice(vars.asset).mul(vars.amount).div(
+      IPriceOracleGetter(oracle).updateAssetPrice(vars.asset).mul(vars.amount).div(
         10**reserve.configuration.getDecimals()
       );
 

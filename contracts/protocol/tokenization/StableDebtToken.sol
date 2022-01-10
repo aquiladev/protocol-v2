@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.6.12;
+pragma solidity 0.7.6;
 
 import {DebtTokenBase} from './base/DebtTokenBase.sol';
 import {MathUtils} from '../libraries/math/MathUtils.sol';
@@ -8,6 +8,7 @@ import {IStableDebtToken} from '../../interfaces/IStableDebtToken.sol';
 import {ILendingPool} from '../../interfaces/ILendingPool.sol';
 import {IAaveIncentivesController} from '../../interfaces/IAaveIncentivesController.sol';
 import {Errors} from '../libraries/helpers/Errors.sol';
+import {SafeMath} from '../../dependencies/openzeppelin/contracts/SafeMath.sol';
 
 /**
  * @title StableDebtToken
@@ -17,6 +18,7 @@ import {Errors} from '../libraries/helpers/Errors.sol';
  **/
 contract StableDebtToken is IStableDebtToken, DebtTokenBase {
   using WadRayMath for uint256;
+  using SafeMath for uint256;
 
   uint256 public constant DEBT_TOKEN_REVISION = 0x1;
 
@@ -25,8 +27,6 @@ contract StableDebtToken is IStableDebtToken, DebtTokenBase {
   mapping(address => uint256) internal _usersStableRate;
   uint40 internal _totalSupplyTimestamp;
 
-  ILendingPool internal _pool;
-  address internal _underlyingAsset;
   IAaveIncentivesController internal _incentivesController;
 
   /**
@@ -410,7 +410,7 @@ contract StableDebtToken is IStableDebtToken, DebtTokenBase {
     _balances[account] = oldAccountBalance.add(amount);
 
     if (address(_incentivesController) != address(0)) {
-      _incentivesController.handleAction(account, oldTotalSupply, oldAccountBalance);
+      _incentivesController.handleAction(account, oldAccountBalance, oldTotalSupply);
     }
   }
 
@@ -429,7 +429,7 @@ contract StableDebtToken is IStableDebtToken, DebtTokenBase {
     _balances[account] = oldAccountBalance.sub(amount, Errors.SDT_BURN_EXCEEDS_BALANCE);
 
     if (address(_incentivesController) != address(0)) {
-      _incentivesController.handleAction(account, oldTotalSupply, oldAccountBalance);
+      _incentivesController.handleAction(account, oldAccountBalance, oldTotalSupply);
     }
   }
 }

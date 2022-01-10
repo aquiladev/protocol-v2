@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.6.12;
+pragma solidity 0.7.6;
 pragma experimental ABIEncoderV2;
 
 import {StableDebtToken} from '../protocol/tokenization/StableDebtToken.sol';
 import {VariableDebtToken} from '../protocol/tokenization/VariableDebtToken.sol';
 import {LendingRateOracle} from '../mocks/oracle/LendingRateOracle.sol';
 import {Ownable} from '../dependencies/openzeppelin/contracts/Ownable.sol';
-import {StringLib} from './StringLib.sol';
 
 contract StableAndVariableTokensHelper is Ownable {
   address payable private pool;
   address private addressesProvider;
   event deployedContracts(address stableToken, address variableToken);
 
-  constructor(address payable _pool, address _addressesProvider) public {
+  constructor(address payable _pool, address _addressesProvider) {
     pool = _pool;
     addressesProvider = _addressesProvider;
   }
