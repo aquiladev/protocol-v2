@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 
-import { ParaSwapLiquiditySwapAdapterFactory } from '../../types';
+// import { ParaSwapLiquiditySwapAdapterFactory } from '../../types';
 import { verifyContract } from '../../helpers/contracts-helpers';
 import { getFirstSigner } from '../../helpers/contracts-getters';
 import { eContractid } from '../../helpers/types';
@@ -19,18 +19,18 @@ task(`deploy-${CONTRACT_NAME}`, `Deploys the ${CONTRACT_NAME} contract`)
     }
 
     console.log(`\n- ${CONTRACT_NAME} deployment`);
-    const adapter = await new ParaSwapLiquiditySwapAdapterFactory(
-      await getFirstSigner()
-    ).deploy(provider, augustusRegistry);
-    await adapter.deployTransaction.wait();
-    console.log(`${CONTRACT_NAME}.address`, adapter.address);
+    // const adapter = await new ParaSwapLiquiditySwapAdapterFactory(
+    //   await getFirstSigner()
+    // ).deploy(provider, augustusRegistry);
+    // await adapter.deployTransaction.wait();
+    // console.log(`${CONTRACT_NAME}.address`, adapter.address);
 
-    if (verify) {
-      await verifyContract(eContractid.ParaSwapLiquiditySwapAdapter, adapter, [
-        provider,
-        augustusRegistry,
-      ]);
-    }
+    // if (verify) {
+    //   await verifyContract(eContractid.ParaSwapLiquiditySwapAdapter, adapter, [
+    //     provider,
+    //     augustusRegistry,
+    //   ]);
+    // }
 
     console.log(`\tFinished ${CONTRACT_NAME} deployment`);
   });

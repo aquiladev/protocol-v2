@@ -10,9 +10,10 @@ import {
 import { LendingRateOracle } from '../types/LendingRateOracle';
 import { PriceOracle } from '../types/PriceOracle';
 import { MockAggregator } from '../types/MockAggregator';
-import { deployMockAggregator } from './contracts-deployments';
+import { deployMockPriceFeed } from './contracts-deployments';
 import { chunk, waitForTx } from './misc-utils';
 import { getStableAndVariableTokensHelper } from './contracts-getters';
+import { MockPriceFeed } from '../types/MockPriceFeed';
 
 export const setInitialMarketRatesInRatesOracleByHelper = async (
   marketRates: iMultiPoolsAssets<IMarketRates>,
@@ -98,33 +99,50 @@ export const setAssetPricesInOracle = async (
   }
 };
 
-export const deployMockAggregators = async (initialPrices: SymbolMap<string>, verify?: boolean) => {
-  const aggregators: { [tokenSymbol: string]: MockAggregator } = {};
-  for (const tokenContractName of Object.keys(initialPrices)) {
-    if (tokenContractName !== 'ETH') {
-      const priceIndex = Object.keys(initialPrices).findIndex(
-        (value) => value === tokenContractName
-      );
-      const [, price] = (Object.entries(initialPrices) as [string, string][])[priceIndex];
-      aggregators[tokenContractName] = await deployMockAggregator(price, verify);
-    }
-  }
-  return aggregators;
-};
+// export const deployMockAggregators = async (initialPrices: SymbolMap<string>, verify?: boolean) => {
+//   const aggregators: { [tokenSymbol: string]: MockAggregator } = {};
+//   for (const tokenContractName of Object.keys(initialPrices)) {
+//     if (tokenContractName !== 'ETH') {
+//       const priceIndex = Object.keys(initialPrices).findIndex(
+//         (value) => value === tokenContractName
+//       );
+//       const [, price] = (Object.entries(initialPrices) as [string, string][])[priceIndex];
+//       aggregators[tokenContractName] = await deployMockAggregator(price, verify);
+//     }
+//   }
+//   return aggregators;
+// };
 
-export const deployAllMockAggregators = async (
-  initialPrices: iAssetAggregatorBase<string>,
+// export const deployAllMockAggregators = async (
+//   initialPrices: iAssetAggregatorBase<string>,
+//   verify?: boolean
+// ) => {
+//   const aggregators: { [tokenSymbol: string]: MockAggregator } = {};
+//   for (const tokenContractName of Object.keys(initialPrices)) {
+//     if (tokenContractName !== 'ETH') {
+//       const priceIndex = Object.keys(initialPrices).findIndex(
+//         (value) => value === tokenContractName
+//       );
+//       const [, price] = (Object.entries(initialPrices) as [string, string][])[priceIndex];
+//       aggregators[tokenContractName] = await deployMockAggregator(price, verify);
+//     }
+//   }
+//   return aggregators;
+// };
+
+export const deployAllMockPriceFeeds = async (
+  allAssetsAddresses: {
+    [tokenSymbol: string]: tEthereumAddress;
+  },
+  oracle: tEthereumAddress,
   verify?: boolean
 ) => {
-  const aggregators: { [tokenSymbol: string]: MockAggregator } = {};
-  for (const tokenContractName of Object.keys(initialPrices)) {
-    if (tokenContractName !== 'ETH') {
-      const priceIndex = Object.keys(initialPrices).findIndex(
-        (value) => value === tokenContractName
-      );
-      const [, price] = (Object.entries(initialPrices) as [string, string][])[priceIndex];
-      aggregators[tokenContractName] = await deployMockAggregator(price, verify);
+  const feeds: { [tokenSymbol: string]: MockPriceFeed } = {};
+  for (const [tokenSymbol, assetAddress] of Object.entries(allAssetsAddresses)) {
+    console.log(tokenSymbol, assetAddress, oracle)
+    if (tokenSymbol !== 'ETH') {
+      feeds[tokenSymbol] = await deployMockPriceFeed([oracle, assetAddress], verify);
     }
   }
-  return aggregators;
+  return feeds;
 };

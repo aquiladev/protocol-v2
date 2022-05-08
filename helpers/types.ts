@@ -4,7 +4,12 @@ export interface SymbolMap<T> {
   [symbol: string]: T;
 }
 
-export type eNetwork = eEthereumNetwork | ePolygonNetwork | eXDaiNetwork | eAvalancheNetwork;
+export type eNetwork =
+  | eEthereumNetwork
+  | ePolygonNetwork
+  | eXDaiNetwork
+  | eAvalancheNetwork
+  | eAuroraNetwork;
 
 export enum eEthereumNetwork {
   buidlerevm = 'buidlerevm',
@@ -30,6 +35,11 @@ export enum eAvalancheNetwork {
   fuji = 'fuji',
 }
 
+export enum eAuroraNetwork {
+  aurora = 'aurora',
+  auroraTestnet = 'auroraTestnet',
+}
+
 export enum EthereumNetworkNames {
   kovan = 'kovan',
   ropsten = 'ropsten',
@@ -39,6 +49,8 @@ export enum EthereumNetworkNames {
   xdai = 'xdai',
   avalanche = 'avalanche',
   fuji = 'fuji',
+  aurora = 'aurora',
+  auroraTestnet = 'auroraTestnet',
 }
 
 export enum AavePools {
@@ -102,6 +114,14 @@ export enum eContractid {
   ParaSwapLiquiditySwapAdapter = 'ParaSwapLiquiditySwapAdapter',
   UiIncentiveDataProviderV2V3 = 'UiIncentiveDataProviderV2V3',
   UiIncentiveDataProviderV2 = 'UiIncentiveDataProviderV2',
+  PriceFeed = 'PriceFeed',
+  MockPriceFeed = 'MockPriceFeed',
+  ToreusToken = 'ToreusToken',
+  MultiFeeDistribution = 'MultiFeeDistribution',
+  ChefIncentivesController = 'ChefIncentivesController',
+  MasterChef = 'MasterChef',
+  MerkleDistributor = 'MerkleDistributor',
+  TokenVesting = 'TokenVesting',
 }
 
 /*
@@ -326,6 +346,8 @@ export type iAvalanchePoolAssets<T> = Pick<
   'WETH' | 'DAI' | 'USDT' | 'AAVE' | 'WBTC' | 'WAVAX' | 'USDC'
 >;
 
+export type iAuroraPoolAssets<T> = Pick<iAssetsWithoutUSD<T>, 'DAI' | 'USDC' | 'USDT' | 'WBTC' | 'WETH'>;
+
 export type iMultiPoolsAssets<T> = iAssetCommon<T> | iAavePoolAssets<T>;
 
 export type iAavePoolTokens<T> = Omit<iAavePoolAssets<T>, 'ETH'>;
@@ -417,7 +439,8 @@ export type iParamsPerNetwork<T> =
   | iEthereumParamsPerNetwork<T>
   | iPolygonParamsPerNetwork<T>
   | iXDaiParamsPerNetwork<T>
-  | iAvalancheParamsPerNetwork<T>;
+  | iAvalancheParamsPerNetwork<T>
+  | iAuroraParamsPerNetwork<T>;
 
 export interface iParamsPerNetworkAll<T>
   extends iEthereumParamsPerNetwork<T>,
@@ -446,6 +469,11 @@ export interface iXDaiParamsPerNetwork<T> {
 export interface iAvalancheParamsPerNetwork<T> {
   [eAvalancheNetwork.avalanche]: T;
   [eAvalancheNetwork.fuji]: T;
+}
+
+export interface iAuroraParamsPerNetwork<T> {
+  [eAuroraNetwork.aurora]: T;
+  [eAuroraNetwork.auroraTestnet]: T;
 }
 
 export interface iParamsPerPool<T> {
@@ -550,6 +578,10 @@ export interface IXDAIConfiguration extends ICommonConfiguration {
 
 export interface IAvalancheConfiguration extends ICommonConfiguration {
   ReservesConfig: iAvalanchePoolAssets<IReserveParams>;
+}
+
+export interface IAuroraConfiguration extends ICommonConfiguration {
+  ReservesConfig: iAuroraPoolAssets<IReserveParams>;
 }
 
 export interface ITokenAddress {

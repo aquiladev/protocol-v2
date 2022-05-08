@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 import { eContractid } from '../../helpers/types';
-import { deployUiPoolDataProviderV2V3 } from '../../helpers/contracts-deployments';
+// import { deployUiPoolDataProviderV2V3 } from '../../helpers/contracts-deployments';
 import { chainlinkAggregatorProxy, chainlinkEthUsdAggregatorProxy } from '../../helpers/constants';
 
 task(`deploy-${eContractid.UiPoolDataProviderV2V3}`, `Deploys the UiPoolDataProviderV2V3 contract`)
@@ -23,12 +23,12 @@ task(`deploy-${eContractid.UiPoolDataProviderV2V3}`, `Deploys the UiPoolDataProv
     );
     console.log(`\n- UiPoolDataProviderV2V3 deployment`);
 
-    const UiPoolDataProviderV2V3 = await deployUiPoolDataProviderV2V3(
-      chainlinkAggregatorProxy[localBRE.network.name],
-      chainlinkEthUsdAggregatorProxy[localBRE.network.name],
-      verify
-    );
+    // const UiPoolDataProviderV2V3 = await deployUiPoolDataProviderV2V3(
+    //   chainlinkAggregatorProxy[localBRE.network.name],
+    //   chainlinkEthUsdAggregatorProxy[localBRE.network.name],
+    //   verify
+    // );
 
-    console.log('UiPoolDataProviderV2 deployed at:', UiPoolDataProviderV2V3.address);
+    // console.log('UiPoolDataProviderV2 deployed at:', UiPoolDataProviderV2V3.address);
     console.log(`\tFinished UiPoolDataProvider deployment`);
   });

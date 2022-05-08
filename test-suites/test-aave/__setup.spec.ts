@@ -32,6 +32,9 @@ import {
   authorizeWETHGateway,
   deployATokenImplementations,
   deployAaveOracle,
+  deployChefIncentivesController,
+  deployMultiFeeDistribution,
+  deployToreusToken,
 } from '../../helpers/contracts-deployments';
 import { Signer } from 'ethers';
 import { TokenContractId, eContractid, tEthereumAddress, AavePools } from '../../helpers/types';
@@ -48,6 +51,7 @@ import {
   setInitialAssetPricesInOracle,
   deployAllMockAggregators,
   setInitialMarketRatesInRatesOracleByHelper,
+  deployAllMockPriceFeeds,
 } from '../../helpers/oracles-helpers';
 import { DRE, waitForTx } from '../../helpers/misc-utils';
 import { initReservesByHelper, configureReservesByHelper } from '../../helpers/init-helpers';
@@ -57,6 +61,7 @@ import {
   getLendingPool,
   getLendingPoolConfiguratorProxy,
   getPairsTokenAggregator,
+  getPairsTokenPriceFeed,
 } from '../../helpers/contracts-getters';
 import { WETH9Mocked } from '../../types/WETH9Mocked';
 
@@ -73,6 +78,7 @@ const deployAllMockTokens = async (deployer: Signer) => {
   for (const tokenSymbol of Object.keys(TokenContractId)) {
     if (tokenSymbol === 'WETH') {
       tokens[tokenSymbol] = await deployWETHMocked();
+      console.log(tokenSymbol, tokens[tokenSymbol].address)
       await registerContractInJsonDb(tokenSymbol.toUpperCase(), tokens[tokenSymbol]);
       continue;
     }
@@ -89,6 +95,7 @@ const deployAllMockTokens = async (deployer: Signer) => {
       tokenSymbol,
       configData ? configData.reserveDecimals : 18,
     ]);
+    console.log(tokenSymbol, tokens[tokenSymbol].address)
     await registerContractInJsonDb(tokenSymbol.toUpperCase(), tokens[tokenSymbol]);
   }
 
@@ -119,12 +126,10 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   );
 
   const lendingPoolImpl = await deployLendingPool();
-
   await waitForTx(await addressesProvider.setLendingPoolImpl(lendingPoolImpl.address));
 
   const lendingPoolAddress = await addressesProvider.getLendingPool();
   const lendingPoolProxy = await getLendingPool(lendingPoolAddress);
-
   await insertContractAddressInDb(eContractid.LendingPool, lendingPoolProxy.address);
 
   const lendingPoolConfiguratorImpl = await deployLendingPoolConfigurator();
@@ -202,7 +207,6 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     fallbackOracle
   );
 
-  const mockAggregators = await deployAllMockAggregators(ALL_ASSETS_INITIAL_PRICES);
   const allTokenAddresses = Object.entries(mockTokens).reduce(
     (accum: { [tokenSymbol: string]: tEthereumAddress }, [tokenSymbol, tokenContract]) => ({
       ...accum,
@@ -210,36 +214,55 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     }),
     {}
   );
-  const allAggregatorsAddresses = Object.entries(mockAggregators).reduce(
-    (accum: { [tokenSymbol: string]: tEthereumAddress }, [tokenSymbol, aggregator]) => ({
+
+  // const mockAggregators = await deployAllMockAggregators(ALL_ASSETS_INITIAL_PRICES);
+  // const allAggregatorsAddresses = Object.entries(mockAggregators).reduce(
+  //   (accum: { [tokenSymbol: string]: tEthereumAddress }, [tokenSymbol, aggregator]) => ({
+  //     ...accum,
+  //     [tokenSymbol]: aggregator.address,
+  //   }),
+  //   {}
+  // );
+
+  // const [tokens, aggregators] = getPairsTokenAggregator(
+  //   allTokenAddresses,
+  //   allAggregatorsAddresses,
+  //   config.OracleQuoteCurrency
+  // );
+
+  // const aaveOracle = await deployAaveOracle([
+  //   tokens,
+  //   aggregators,
+  //   fallbackOracle.address,
+  //   mockTokens.WETH.address,
+  //   oneEther.toString(),
+  // ]);
+  // await waitForTx(await addressesProvider.setPriceOracle(fallbackOracle.address));
+
+  const mockPriceFeeds = await deployAllMockPriceFeeds(allTokenAddresses, fallbackOracle.address);
+  const allFeedsAddresses = Object.entries(mockPriceFeeds).reduce(
+    (accum: { [tokenSymbol: string]: tEthereumAddress }, [tokenSymbol, feed]) => ({
       ...accum,
-      [tokenSymbol]: aggregator.address,
+      [tokenSymbol]: feed.address,
     }),
     {}
   );
 
-  const [tokens, aggregators] = getPairsTokenAggregator(
+  const [tokens, priceFeeds] = getPairsTokenPriceFeed(
     allTokenAddresses,
-    allAggregatorsAddresses,
-    config.OracleQuoteCurrency
+    allFeedsAddresses
   );
 
-  await deployAaveOracle([
-    tokens,
-    aggregators,
-    fallbackOracle.address,
-    mockTokens.WETH.address,
-    oneEther.toString(),
-  ]);
-  await waitForTx(await addressesProvider.setPriceOracle(fallbackOracle.address));
+  const aaveOracle = await deployAaveOracle([ tokens, priceFeeds ]);
+  console.log('=========AaveOracle', aaveOracle.address);
+  await waitForTx(await addressesProvider.setPriceOracle(aaveOracle.address));
 
   const lendingRateOracle = await deployLendingRateOracle();
+  console.log('=========LendingRateOracle', lendingRateOracle.address);
   await waitForTx(await addressesProvider.setLendingRateOracle(lendingRateOracle.address));
 
   const { USD, ...tokensAddressesWithoutUsd } = allTokenAddresses;
-  const allReservesAddresses = {
-    ...tokensAddressesWithoutUsd,
-  };
+  const allReservesAddresses = { ...tokensAddressesWithoutUsd };
   await setInitialMarketRatesInRatesOracleByHelper(
     LENDING_RATE_ORACLE_RATES_COMMON,
     allReservesAddresses,
@@ -260,7 +283,17 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
 
   const { ATokenNamePrefix, StableDebtTokenNamePrefix, VariableDebtTokenNamePrefix, SymbolPrefix } =
     config;
-  const treasuryAddress = await getTreasuryAddress(config);
+  // const treasuryAddress = await getTreasuryAddress(config);
+  const treasury = await deployToreusToken(['1000000000000000000000000000'], false); // 1B
+  const treasuryAddress = treasury.address;
+
+  const multiFeeDistribution = await deployMultiFeeDistribution([treasuryAddress], false);
+  await multiFeeDistribution['transferOwnership(address)'](lendingPoolConfiguratorProxy.address);
+
+  const incentivesController = await deployChefIncentivesController(
+    [[], [], lendingPoolConfiguratorProxy.address, ZERO_ADDRESS, '0'],
+    false,
+  );
 
   await initReservesByHelper(
     reservesParams,
@@ -270,8 +303,8 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     VariableDebtTokenNamePrefix,
     SymbolPrefix,
     admin,
-    treasuryAddress,
-    ZERO_ADDRESS,
+    multiFeeDistribution.address,
+    incentivesController.address,
     ConfigNames.Aave,
     false
   );
@@ -284,23 +317,23 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   );
   await deployMockFlashLoanReceiver(addressesProvider.address);
 
-  const mockUniswapRouter = await deployMockUniswapRouter();
+  // const mockUniswapRouter = await deployMockUniswapRouter();
 
-  const adapterParams: [string, string, string] = [
-    addressesProvider.address,
-    mockUniswapRouter.address,
-    mockTokens.WETH.address,
-  ];
+  // const adapterParams: [string, string, string] = [
+  //   addressesProvider.address,
+  //   mockUniswapRouter.address,
+  //   mockTokens.WETH.address,
+  // ];
 
-  await deployUniswapLiquiditySwapAdapter(adapterParams);
-  await deployUniswapRepayAdapter(adapterParams);
-  await deployFlashLiquidationAdapter(adapterParams);
+  // await deployUniswapLiquiditySwapAdapter(adapterParams);
+  // await deployUniswapRepayAdapter(adapterParams);
+  // await deployFlashLiquidationAdapter(adapterParams);
 
-  const augustus = await deployMockParaSwapAugustus();
+  // const augustus = await deployMockParaSwapAugustus();
 
-  const augustusRegistry = await deployMockParaSwapAugustusRegistry([augustus.address]);
+  // const augustusRegistry = await deployMockParaSwapAugustusRegistry([augustus.address]);
 
-  await deployParaSwapLiquiditySwapAdapter([addressesProvider.address, augustusRegistry.address]);
+  // await deployParaSwapLiquiditySwapAdapter([addressesProvider.address, augustusRegistry.address]);
 
   await deployWalletBalancerProvider();
 

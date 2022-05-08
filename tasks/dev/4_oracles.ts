@@ -6,7 +6,7 @@ import {
 } from '../../helpers/contracts-deployments';
 import {
   setInitialAssetPricesInOracle,
-  deployAllMockAggregators,
+  // deployAllMockAggregators,
   setInitialMarketRatesInRatesOracleByHelper,
 } from '../../helpers/oracles-helpers';
 import { ICommonConfiguration, iAssetBase, TokenContractId } from '../../helpers/types';
@@ -49,40 +49,40 @@ task('dev:deploy-oracles', 'Deploy oracles for dev environment')
     await waitForTx(await fallbackOracle.setEthUsdPrice(MockUsdPriceInWei));
     await setInitialAssetPricesInOracle(AllAssetsInitialPrices, mockTokensAddress, fallbackOracle);
 
-    const mockAggregators = await deployAllMockAggregators(AllAssetsInitialPrices, verify);
+    // const mockAggregators = await deployAllMockAggregators(AllAssetsInitialPrices, verify);
 
-    const allTokenAddresses = getAllTokenAddresses(mockTokens);
-    const allAggregatorsAddresses = getAllAggregatorsAddresses(mockAggregators);
+    // const allTokenAddresses = getAllTokenAddresses(mockTokens);
+    // const allAggregatorsAddresses = getAllAggregatorsAddresses(mockAggregators);
 
-    const [tokens, aggregators] = getPairsTokenAggregator(
-      allTokenAddresses,
-      allAggregatorsAddresses,
-      OracleQuoteCurrency
-    );
+    // const [tokens, aggregators] = getPairsTokenAggregator(
+    //   allTokenAddresses,
+    //   allAggregatorsAddresses,
+    //   OracleQuoteCurrency
+    // );
 
-    await deployAaveOracle(
-      [
-        tokens,
-        aggregators,
-        fallbackOracle.address,
-        await getQuoteCurrency(poolConfig),
-        OracleQuoteUnit,
-      ],
-      verify
-    );
+    // await deployAaveOracle(
+    //   [
+    //     tokens,
+    //     aggregators,
+    //     fallbackOracle.address,
+    //     await getQuoteCurrency(poolConfig),
+    //     OracleQuoteUnit,
+    //   ],
+    //   verify
+    // );
     await waitForTx(await addressesProvider.setPriceOracle(fallbackOracle.address));
 
     const lendingRateOracle = await deployLendingRateOracle(verify);
     await waitForTx(await addressesProvider.setLendingRateOracle(lendingRateOracle.address));
 
-    const { USD, ...tokensAddressesWithoutUsd } = allTokenAddresses;
-    const allReservesAddresses = {
-      ...tokensAddressesWithoutUsd,
-    };
-    await setInitialMarketRatesInRatesOracleByHelper(
-      LendingRateOracleRatesCommon,
-      allReservesAddresses,
-      lendingRateOracle,
-      admin
-    );
+    // const { USD, ...tokensAddressesWithoutUsd } = allTokenAddresses;
+    // const allReservesAddresses = {
+    //   ...tokensAddressesWithoutUsd,
+    // };
+    // await setInitialMarketRatesInRatesOracleByHelper(
+    //   LendingRateOracleRatesCommon,
+    //   allReservesAddresses,
+    //   lendingRateOracle,
+    //   admin
+    // );
   });

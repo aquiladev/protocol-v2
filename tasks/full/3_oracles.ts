@@ -1,6 +1,10 @@
 import { task } from 'hardhat/config';
 import { getParamPerNetwork } from '../../helpers/contracts-helpers';
-import { deployAaveOracle, deployLendingRateOracle } from '../../helpers/contracts-deployments';
+import {
+  deployAaveOracle,
+  deployLendingRateOracle,
+  deployPriceFeed,
+} from '../../helpers/contracts-deployments';
 import { setInitialMarketRatesInRatesOracleByHelper } from '../../helpers/oracles-helpers';
 import { ICommonConfiguration, eNetwork, SymbolMap } from '../../helpers/types';
 import { waitForTx, notFalsyOrZeroAddress } from '../../helpers/misc-utils';
@@ -46,9 +50,15 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
         ...reserveAssets,
         USD: UsdAddress,
       };
+
+      const priceFeeds = {};
+      for (const [token, aggregator] of Object.entries(chainlinkAggregators)) {
+        priceFeeds[token] = (await deployPriceFeed([aggregator, '7200'], verify)).address;
+      }
+
       const [tokens, aggregators] = getPairsTokenAggregator(
         tokensToWatch,
-        chainlinkAggregators,
+        priceFeeds,
         poolConfig.OracleQuoteCurrency
       );
 
@@ -63,9 +73,9 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
           [
             tokens,
             aggregators,
-            fallbackOracleAddress,
-            await getQuoteCurrency(poolConfig),
-            poolConfig.OracleQuoteUnit,
+            // fallbackOracleAddress,
+            // await getQuoteCurrency(poolConfig),
+            // poolConfig.OracleQuoteUnit,
           ],
           verify
         );

@@ -4,10 +4,10 @@ import {
   deployLendingPoolCollateralManager,
   deployWalletBalancerProvider,
   authorizeWETHGateway,
-  deployUiPoolDataProviderV2,
+  // deployUiPoolDataProviderV2,
 } from '../../helpers/contracts-deployments';
-import { loadPoolConfig, ConfigNames, getTreasuryAddress } from '../../helpers/configuration';
-import { getWETHGateway } from '../../helpers/contracts-getters';
+import { loadPoolConfig, ConfigNames } from '../../helpers/configuration';
+import { getIncentivesControllerAddress, getLendingPoolConfiguratorProxy, getTreasuryAddress, getWETHGateway } from '../../helpers/contracts-getters';
 import { eNetwork, ICommonConfiguration } from '../../helpers/types';
 import { notFalsyOrZeroAddress, waitForTx } from '../../helpers/misc-utils';
 import { initReservesByHelper, configureReservesByHelper } from '../../helpers/init-helpers';
@@ -39,7 +39,7 @@ task('full:initialize-lending-pool', 'Initialize lending pool configuration.')
       } = poolConfig as ICommonConfiguration;
 
       const reserveAssets = await getParamPerNetwork(ReserveAssets, network);
-      const incentivesController = await getParamPerNetwork(IncentivesController, network);
+      // const incentivesController = await getParamPerNetwork(IncentivesController, network);
       const addressesProvider = await getLendingPoolAddressesProvider();
 
       const testHelpers = await getAaveProtocolDataProvider();
@@ -51,7 +51,12 @@ task('full:initialize-lending-pool', 'Initialize lending pool configuration.')
         throw 'Reserve assets is undefined. Check ReserveAssets configuration at config directory';
       }
 
-      const treasuryAddress = await getTreasuryAddress(poolConfig);
+      // // const treasuryAddress = await getTreasuryAddress(poolConfig);
+      const treasuryAddress = await getTreasuryAddress();
+      console.log('treasuryAddress', treasuryAddress);
+
+      const incentivesController = await getIncentivesControllerAddress();
+      console.log('incentivesController', incentivesController);
 
       await initReservesByHelper(
         ReservesConfig,
@@ -100,21 +105,29 @@ task('full:initialize-lending-pool', 'Initialize lending pool configuration.')
 
       await deployWalletBalancerProvider(verify);
 
-      const uiPoolDataProvider = await deployUiPoolDataProviderV2(
-        chainlinkAggregatorProxy[localBRE.network.name],
-        chainlinkEthUsdAggregatorProxy[localBRE.network.name],
-        verify
-      );
-      console.log('UiPoolDataProvider deployed at:', uiPoolDataProvider.address);
+      // const uiPoolDataProvider = await deployUiPoolDataProviderV2(
+      //   chainlinkAggregatorProxy[localBRE.network.name],
+      //   chainlinkEthUsdAggregatorProxy[localBRE.network.name],
+      //   verify
+      // );
+      // console.log('UiPoolDataProvider deployed at:', uiPoolDataProvider.address);
 
-      const lendingPoolAddress = await addressesProvider.getLendingPool();
+      // const lendingPoolAddress = await addressesProvider.getLendingPool();
 
-      let gateWay = getParamPerNetwork(WethGateway, network);
-      if (!notFalsyOrZeroAddress(gateWay)) {
-        gateWay = (await getWETHGateway()).address;
+      // let gateWay = getParamPerNetwork(WethGateway, network);
+      // if (!notFalsyOrZeroAddress(gateWay)) {
+      //   gateWay = (await getWETHGateway()).address;
+      // }
+      // console.log('GATEWAY', gateWay);
+      // await authorizeWETHGateway(gateWay, lendingPoolAddress);
+
+      if (network === 'auroraTestnet') {
+        // unpause pool on testnet
+        const lendingPoolConfiguratorProxy = await getLendingPoolConfiguratorProxy(
+          await addressesProvider.getLendingPoolConfigurator()
+        );
+        await waitForTx(await lendingPoolConfiguratorProxy.connect(admin).setPoolPause(false));
       }
-      console.log('GATEWAY', gateWay);
-      await authorizeWETHGateway(gateWay, lendingPoolAddress);
     } catch (err) {
       console.error(err);
       exit(1);

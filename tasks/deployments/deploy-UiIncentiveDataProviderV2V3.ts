@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 import { eContractid } from '../../helpers/types';
-import { deployUiIncentiveDataProviderV2V3 } from '../../helpers/contracts-deployments';
+// import { deployUiIncentiveDataProviderV2V3 } from '../../helpers/contracts-deployments';
 
 task(
   `deploy-${eContractid.UiIncentiveDataProviderV2V3}`,
@@ -14,8 +14,8 @@ task(
     }
     console.log(`\n- UiIncentiveDataProviderV2V3 deployment`);
 
-    const uiIncentiveDataProviderV2V3 = await deployUiIncentiveDataProviderV2V3(verify);
+    // const uiIncentiveDataProviderV2V3 = await deployUiIncentiveDataProviderV2V3(verify);
 
-    console.log('UiIncentiveDataProviderV2V3 deployed at:', uiIncentiveDataProviderV2V3.address);
+    // console.log('UiIncentiveDataProviderV2V3 deployed at:', uiIncentiveDataProviderV2V3.address);
     console.log(`\tFinished UiIncentiveDataProviderV2V3 deployment`);
   });

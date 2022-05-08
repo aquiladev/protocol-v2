@@ -1,9 +1,12 @@
 import path from 'path';
 import fs from 'fs';
+const { task } = require('hardhat/config');
+const { TASK_COMPILE } = require('hardhat/builtin-tasks/task-names');
 import { HardhatUserConfig } from 'hardhat/types';
 // @ts-ignore
 import { accounts } from './test-wallets.js';
 import {
+  eAuroraNetwork,
   eAvalancheNetwork,
   eEthereumNetwork,
   eNetwork,
@@ -22,8 +25,8 @@ require('dotenv').config();
 
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
-import 'temp-hardhat-etherscan';
-import 'hardhat-gas-reporter';
+import '@nomiclabs/hardhat-etherscan';
+// import 'hardhat-gas-reporter';
 import 'hardhat-typechain';
 import '@tenderly/hardhat-tenderly';
 import 'solidity-coverage';
@@ -51,6 +54,27 @@ if (!SKIP_LOAD) {
     }
   );
 }
+
+task(TASK_COMPILE, 'hook compile task to perform post-compile task', async (_, hre, runSuper) => {
+  const { root } = hre.config.paths;
+  const outputDir = path.resolve(root, './abi');
+
+  await runSuper();
+
+  if (fs.existsSync(outputDir)) {
+    fs.rmdirSync(outputDir, { recursive: true });
+  }
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  for (const artifactPath of await hre.artifacts.getArtifactPaths()) {
+    const artifact = fs.readFileSync(artifactPath);
+    const { abi, contractName } = JSON.parse(artifact.toString());
+    if (!abi.length || contractName.includes('Mock')) continue;
+
+    const target = path.join(outputDir, `${contractName}.json`);
+    fs.copyFileSync(artifactPath, target);
+  }
+});
 
 require(`${path.join(__dirname, 'tasks/misc')}/set-bre.ts`);
 
@@ -87,7 +111,7 @@ const buidlerConfig: HardhatUserConfig = {
           optimizer: { enabled: true, runs: 200 },
           evmVersion: 'istanbul',
         },
-      }
+      },
     ],
   },
   typechain: {
@@ -95,7 +119,9 @@ const buidlerConfig: HardhatUserConfig = {
     target: 'ethers-v5',
   },
   etherscan: {
-    apiKey: ETHERSCAN_KEY,
+    apiKey: {
+      auroraTestnet: ETHERSCAN_KEY,
+    },
   },
   mocha: {
     timeout: 0,
@@ -119,6 +145,12 @@ const buidlerConfig: HardhatUserConfig = {
     xdai: getCommonNetworkConfig(eXDaiNetwork.xdai, 100),
     avalanche: getCommonNetworkConfig(eAvalancheNetwork.avalanche, 43114),
     fuji: getCommonNetworkConfig(eAvalancheNetwork.fuji, 43113),
+    // aurora: getCommonNetworkConfig(eAuroraNetwork.aurora, 1313161554),
+    auroraTestnet: {
+      ...getCommonNetworkConfig(eAuroraNetwork.auroraTestnet, 1313161555),
+      accounts: ['ffe114f2eb9d338b0c568edf06eb73f38302e281bedaf2b2780c63fd53df00f8'],
+      timeout: 120000,
+    },
     hardhat: {
       hardfork: 'berlin',
       blockGasLimit: DEFAULT_BLOCK_GAS_LIMIT,

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Code from https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol
 
 pragma solidity 0.7.6;
 
-interface IChainlinkAggregator {
+interface IFluxAggregator {
   function decimals() external view returns (uint8);
 
   function description() external view returns (string memory);

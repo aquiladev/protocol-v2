@@ -38,7 +38,7 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
     const configs = Object.entries(ReservesConfig) as [string, IReserveParams][];
     for (const entry of Object.entries(getParamPerNetwork(ReserveAssets, network))) {
       const [token, tokenAddress] = entry;
-      console.log(`- Verifying ${token} token related contracts`);
+      console.log(`- Verifying ${token} (${tokenAddress}) token related contracts`);
       const {
         stableDebtTokenAddress,
         variableDebtTokenAddress,

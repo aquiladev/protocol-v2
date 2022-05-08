@@ -59,6 +59,7 @@ export const initReservesByHelper = async (
     underlyingAsset: string;
     treasury: string;
     incentivesController: string;
+    allocPoint: BigNumberish;
     underlyingAssetName: string;
     aTokenName: string;
     aTokenSymbol: string;
@@ -135,6 +136,7 @@ export const initReservesByHelper = async (
       underlyingAsset: tokenAddresses[symbol],
       treasury: treasuryAddress,
       incentivesController: incentivesController,
+      allocPoint: 100,
       underlyingAssetName: symbol,
       aTokenName: `${aTokenNamePrefix} ${symbol}`,
       aTokenSymbol: `a${symbolPrefix}${symbol}`,

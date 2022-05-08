@@ -5,11 +5,11 @@ pragma solidity 0.7.6;
 import '../dependencies/openzeppelin/contracts/SafeMath.sol';
 import '../dependencies/openzeppelin/contracts/IERC20.sol';
 
-contract GeistToken is IERC20 {
+contract ToreusToken is IERC20 {
   using SafeMath for uint256;
 
-  string public constant symbol = 'GEIST';
-  string public constant name = 'Geist.Finance Protocol Token';
+  string public constant symbol = 'TORE';
+  string public constant name = 'Toreus.Finance Protocol Token';
   uint8 public constant decimals = 18;
   uint256 public override totalSupply;
   uint256 public immutable maxTotalSupply;
@@ -48,23 +48,23 @@ contract GeistToken is IERC20 {
   }
 
   /**
-        @notice Transfer tokens to a specified address
-        @param _to The address to transfer to
-        @param _value The amount to be transferred
-        @return Success boolean
-     */
+    @notice Transfer tokens to a specified address
+    @param _to The address to transfer to
+    @param _value The amount to be transferred
+    @return Success boolean
+  */
   function transfer(address _to, uint256 _value) public override returns (bool) {
     _transfer(msg.sender, _to, _value);
     return true;
   }
 
   /**
-        @notice Transfer tokens from one address to another
-        @param _from The address which you want to send tokens from
-        @param _to The address which you want to transfer to
-        @param _value The amount of tokens to be transferred
-        @return Success boolean
-     */
+    @notice Transfer tokens from one address to another
+    @param _from The address which you want to send tokens from
+    @param _to The address which you want to transfer to
+    @param _value The amount of tokens to be transferred
+    @return Success boolean
+  */
   function transferFrom(
     address _from,
     address _to,

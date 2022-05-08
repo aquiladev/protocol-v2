@@ -21,7 +21,7 @@ import {
   ATokensAndRatesHelperFactory,
   AaveOracleFactory,
   DefaultReserveInterestRateStrategyFactory,
-  DelegationAwareATokenFactory,
+  // DelegationAwareATokenFactory,
   InitializableAdminUpgradeabilityProxyFactory,
   LendingPoolAddressesProviderFactory,
   LendingPoolAddressesProviderRegistryFactory,
@@ -29,32 +29,40 @@ import {
   LendingPoolConfiguratorFactory,
   LendingPoolFactory,
   LendingRateOracleFactory,
-  MintableDelegationERC20Factory,
+  // MintableDelegationERC20Factory,
   MintableERC20Factory,
-  MockAggregatorFactory,
-  MockATokenFactory,
+  // MockAggregatorFactory,
+  // MockATokenFactory,
   MockFlashLoanReceiverFactory,
-  MockParaSwapAugustusFactory,
-  MockParaSwapAugustusRegistryFactory,
-  MockStableDebtTokenFactory,
-  MockVariableDebtTokenFactory,
-  MockUniswapV2Router02Factory,
-  ParaSwapLiquiditySwapAdapterFactory,
+  // MockParaSwapAugustusFactory,
+  // MockParaSwapAugustusRegistryFactory,
+  // MockStableDebtTokenFactory,
+  // MockVariableDebtTokenFactory,
+  // MockUniswapV2Router02Factory,
+  // ParaSwapLiquiditySwapAdapterFactory,
   PriceOracleFactory,
   ReserveLogicFactory,
-  SelfdestructTransferFactory,
+  // SelfdestructTransferFactory,
   StableDebtTokenFactory,
-  UniswapLiquiditySwapAdapterFactory,
-  UniswapRepayAdapterFactory,
+  // UniswapLiquiditySwapAdapterFactory,
+  // UniswapRepayAdapterFactory,
   VariableDebtTokenFactory,
   WalletBalanceProviderFactory,
   WETH9MockedFactory,
   WETHGatewayFactory,
-  FlashLiquidationAdapterFactory,
-  UiPoolDataProviderV2Factory,
-  UiPoolDataProviderV2V3Factory,
-  UiIncentiveDataProviderV2V3,
-  UiIncentiveDataProviderV2Factory,
+  // FlashLiquidationAdapterFactory,
+  // UiPoolDataProviderV2Factory,
+  // UiPoolDataProviderV2V3Factory,
+  // UiIncentiveDataProviderV2V3,
+  // UiIncentiveDataProviderV2Factory,
+  ChefIncentivesControllerFactory,
+  MultiFeeDistributionFactory,
+  ToreusTokenFactory,
+  MockPriceFeedFactory,
+  PriceFeedFactory,
+  MasterChefFactory,
+  MerkleDistributorFactory,
+  TokenVestingFactory,
 } from '../types';
 import {
   withSaveAndVerify,
@@ -66,59 +74,59 @@ import {
   getOptionalParamAddressPerNetwork,
 } from './contracts-helpers';
 import { StableAndVariableTokensHelperFactory } from '../types/StableAndVariableTokensHelperFactory';
-import { MintableDelegationERC20 } from '../types/MintableDelegationERC20';
+// import { MintableDelegationERC20 } from '../types/MintableDelegationERC20';
 import { readArtifact as buidlerReadArtifact } from '@nomiclabs/buidler/plugins';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LendingPoolLibraryAddresses } from '../types/LendingPoolFactory';
 import { UiPoolDataProvider } from '../types';
 import { eNetwork } from './types';
 
-export const deployUiIncentiveDataProviderV2 = async (verify?: boolean) =>
-  withSaveAndVerify(
-    await new UiIncentiveDataProviderV2Factory(await getFirstSigner()).deploy(),
-    eContractid.UiIncentiveDataProviderV2,
-    [],
-    verify
-  );
+// export const deployUiIncentiveDataProviderV2 = async (verify?: boolean) =>
+//   withSaveAndVerify(
+//     await new UiIncentiveDataProviderV2Factory(await getFirstSigner()).deploy(),
+//     eContractid.UiIncentiveDataProviderV2,
+//     [],
+//     verify
+//   );
 
-export const deployUiIncentiveDataProviderV2V3 = async (verify?: boolean) => {
-  const id = eContractid.UiIncentiveDataProviderV2V3;
-  const instance = await deployContract<UiIncentiveDataProviderV2V3>(id, []);
-  if (verify) {
-    await verifyContract(id, instance, []);
-  }
-  return instance;
-};
+// export const deployUiIncentiveDataProviderV2V3 = async (verify?: boolean) => {
+//   const id = eContractid.UiIncentiveDataProviderV2V3;
+//   const instance = await deployContract<UiIncentiveDataProviderV2V3>(id, []);
+//   if (verify) {
+//     await verifyContract(id, instance, []);
+//   }
+//   return instance;
+// };
 
-export const deployUiPoolDataProviderV2 = async (
-  chainlinkAggregatorProxy: string,
-  chainlinkEthUsdAggregatorProxy: string,
-  verify?: boolean
-) =>
-  withSaveAndVerify(
-    await new UiPoolDataProviderV2Factory(await getFirstSigner()).deploy(
-      chainlinkAggregatorProxy,
-      chainlinkEthUsdAggregatorProxy
-    ),
-    eContractid.UiPoolDataProvider,
-    [chainlinkAggregatorProxy, chainlinkEthUsdAggregatorProxy],
-    verify
-  );
+// export const deployUiPoolDataProviderV2 = async (
+//   chainlinkAggregatorProxy: string,
+//   chainlinkEthUsdAggregatorProxy: string,
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new UiPoolDataProviderV2Factory(await getFirstSigner()).deploy(
+//       chainlinkAggregatorProxy,
+//       chainlinkEthUsdAggregatorProxy
+//     ),
+//     eContractid.UiPoolDataProvider,
+//     [chainlinkAggregatorProxy, chainlinkEthUsdAggregatorProxy],
+//     verify
+//   );
 
-export const deployUiPoolDataProviderV2V3 = async (
-  chainlinkAggregatorProxy: string,
-  chainlinkEthUsdAggregatorProxy: string,
-  verify?: boolean
-) =>
-  withSaveAndVerify(
-    await new UiPoolDataProviderV2V3Factory(await getFirstSigner()).deploy(
-      chainlinkAggregatorProxy,
-      chainlinkEthUsdAggregatorProxy
-    ),
-    eContractid.UiPoolDataProvider,
-    [chainlinkAggregatorProxy, chainlinkEthUsdAggregatorProxy],
-    verify
-  );
+// export const deployUiPoolDataProviderV2V3 = async (
+//   chainlinkAggregatorProxy: string,
+//   chainlinkEthUsdAggregatorProxy: string,
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new UiPoolDataProviderV2V3Factory(await getFirstSigner()).deploy(
+//       chainlinkAggregatorProxy,
+//       chainlinkEthUsdAggregatorProxy
+//     ),
+//     eContractid.UiPoolDataProvider,
+//     [chainlinkAggregatorProxy, chainlinkEthUsdAggregatorProxy],
+//     verify
+//   );
 
 export const deployUiPoolDataProvider = async (
   [incentivesController, aaveOracle]: [tEthereumAddress, tEthereumAddress],
@@ -269,16 +277,46 @@ export const deployLendingRateOracle = async (verify?: boolean) =>
     verify
   );
 
-export const deployMockAggregator = async (price: tStringTokenSmallUnits, verify?: boolean) =>
+// export const deployMockAggregator = async (price: tStringTokenSmallUnits, verify?: boolean) =>
+//   withSaveAndVerify(
+//     await new MockAggregatorFactory(await getFirstSigner()).deploy(price),
+//     eContractid.MockAggregator,
+//     [price],
+//     verify
+//   );
+
+export const deployPriceFeed = async (args: [tEthereumAddress, string], verify?: boolean) =>
   withSaveAndVerify(
-    await new MockAggregatorFactory(await getFirstSigner()).deploy(price),
-    eContractid.MockAggregator,
-    [price],
+    await new PriceFeedFactory(await getFirstSigner()).deploy(...args),
+    eContractid.PriceFeed,
+    args,
     verify
   );
 
+export const deployMockPriceFeed = async (
+  args: [tEthereumAddress, tEthereumAddress],
+  verify?: boolean
+) =>
+  withSaveAndVerify(
+    await new MockPriceFeedFactory(await getFirstSigner()).deploy(...args),
+    eContractid.MockPriceFeed,
+    args,
+    verify
+  );
+
+// export const deployAaveOracle = async (
+//   args: [tEthereumAddress[], tEthereumAddress[], tEthereumAddress, tEthereumAddress, string],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new AaveOracleFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.AaveOracle,
+//     args,
+//     verify
+//   );
+
 export const deployAaveOracle = async (
-  args: [tEthereumAddress[], tEthereumAddress[], tEthereumAddress, tEthereumAddress, string],
+  args: [tEthereumAddress[], tEthereumAddress[]],
   verify?: boolean
 ) =>
   withSaveAndVerify(
@@ -353,16 +391,16 @@ export const deployMintableERC20 = async (
     verify
   );
 
-export const deployMintableDelegationERC20 = async (
-  args: [string, string, string],
-  verify?: boolean
-): Promise<MintableDelegationERC20> =>
-  withSaveAndVerify(
-    await new MintableDelegationERC20Factory(await getFirstSigner()).deploy(...args),
-    eContractid.MintableDelegationERC20,
-    args,
-    verify
-  );
+// export const deployMintableDelegationERC20 = async (
+//   args: [string, string, string],
+//   verify?: boolean
+// ): Promise<MintableDelegationERC20> =>
+//   withSaveAndVerify(
+//     await new MintableDelegationERC20Factory(await getFirstSigner()).deploy(...args),
+//     eContractid.MintableDelegationERC20,
+//     args,
+//     verify
+//   );
 export const deployDefaultReserveInterestRateStrategy = async (
   args: [tEthereumAddress, string, string, string, string, string, string],
   verify: boolean
@@ -462,45 +500,45 @@ export const deployGenericATokenImpl = async (verify: boolean) =>
     verify
   );
 
-export const deployDelegationAwareAToken = async (
-  [pool, underlyingAssetAddress, treasuryAddress, incentivesController, name, symbol]: [
-    tEthereumAddress,
-    tEthereumAddress,
-    tEthereumAddress,
-    tEthereumAddress,
-    string,
-    string
-  ],
-  verify: boolean
-) => {
-  const instance = await withSaveAndVerify(
-    await new DelegationAwareATokenFactory(await getFirstSigner()).deploy(),
-    eContractid.DelegationAwareAToken,
-    [],
-    verify
-  );
+// export const deployDelegationAwareAToken = async (
+//   [pool, underlyingAssetAddress, treasuryAddress, incentivesController, name, symbol]: [
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     string,
+//     string
+//   ],
+//   verify: boolean
+// ) => {
+//   const instance = await withSaveAndVerify(
+//     await new DelegationAwareATokenFactory(await getFirstSigner()).deploy(),
+//     eContractid.DelegationAwareAToken,
+//     [],
+//     verify
+//   );
 
-  await instance.initialize(
-    pool,
-    treasuryAddress,
-    underlyingAssetAddress,
-    incentivesController,
-    '18',
-    name,
-    symbol,
-    '0x10'
-  );
+//   await instance.initialize(
+//     pool,
+//     treasuryAddress,
+//     underlyingAssetAddress,
+//     incentivesController,
+//     '18',
+//     name,
+//     symbol,
+//     '0x10'
+//   );
 
-  return instance;
-};
+//   return instance;
+// };
 
-export const deployDelegationAwareATokenImpl = async (verify: boolean) =>
-  withSaveAndVerify(
-    await new DelegationAwareATokenFactory(await getFirstSigner()).deploy(),
-    eContractid.DelegationAwareAToken,
-    [],
-    verify
-  );
+// export const deployDelegationAwareATokenImpl = async (verify: boolean) =>
+//   withSaveAndVerify(
+//     await new DelegationAwareATokenFactory(await getFirstSigner()).deploy(),
+//     eContractid.DelegationAwareAToken,
+//     [],
+//     verify
+//   );
 
 export const deployAllMockTokens = async (verify?: boolean) => {
   const tokens: { [symbol: string]: MockContract | MintableERC20 } = {};
@@ -580,21 +618,21 @@ export const authorizeWETHGateway = async (
     .attach(wethGateWay)
     .authorizeLendingPool(lendingPool);
 
-export const deployMockStableDebtToken = async (
-  args: [tEthereumAddress, tEthereumAddress, tEthereumAddress, string, string, string],
-  verify?: boolean
-) => {
-  const instance = await withSaveAndVerify(
-    await new MockStableDebtTokenFactory(await getFirstSigner()).deploy(),
-    eContractid.MockStableDebtToken,
-    [],
-    verify
-  );
+// export const deployMockStableDebtToken = async (
+//   args: [tEthereumAddress, tEthereumAddress, tEthereumAddress, string, string, string],
+//   verify?: boolean
+// ) => {
+//   const instance = await withSaveAndVerify(
+//     await new MockStableDebtTokenFactory(await getFirstSigner()).deploy(),
+//     eContractid.MockStableDebtToken,
+//     [],
+//     verify
+//   );
 
-  await instance.initialize(args[0], args[1], args[2], '18', args[3], args[4], args[5]);
+//   await instance.initialize(args[0], args[1], args[2], '18', args[3], args[4], args[5]);
 
-  return instance;
-};
+//   return instance;
+// };
 
 export const deployWETHMocked = async (verify?: boolean) =>
   withSaveAndVerify(
@@ -604,101 +642,101 @@ export const deployWETHMocked = async (verify?: boolean) =>
     verify
   );
 
-export const deployMockVariableDebtToken = async (
-  args: [tEthereumAddress, tEthereumAddress, tEthereumAddress, string, string, string],
-  verify?: boolean
-) => {
-  const instance = await withSaveAndVerify(
-    await new MockVariableDebtTokenFactory(await getFirstSigner()).deploy(),
-    eContractid.MockVariableDebtToken,
-    [],
-    verify
-  );
+// export const deployMockVariableDebtToken = async (
+//   args: [tEthereumAddress, tEthereumAddress, tEthereumAddress, string, string, string],
+//   verify?: boolean
+// ) => {
+//   const instance = await withSaveAndVerify(
+//     await new MockVariableDebtTokenFactory(await getFirstSigner()).deploy(),
+//     eContractid.MockVariableDebtToken,
+//     [],
+//     verify
+//   );
 
-  await instance.initialize(args[0], args[1], args[2], '18', args[3], args[4], args[5]);
+//   await instance.initialize(args[0], args[1], args[2], '18', args[3], args[4], args[5]);
 
-  return instance;
-};
+//   return instance;
+// };
 
-export const deployMockAToken = async (
-  args: [
-    tEthereumAddress,
-    tEthereumAddress,
-    tEthereumAddress,
-    tEthereumAddress,
-    string,
-    string,
-    string
-  ],
-  verify?: boolean
-) => {
-  const instance = await withSaveAndVerify(
-    await new MockATokenFactory(await getFirstSigner()).deploy(),
-    eContractid.MockAToken,
-    [],
-    verify
-  );
+// export const deployMockAToken = async (
+//   args: [
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     tEthereumAddress,
+//     string,
+//     string,
+//     string
+//   ],
+//   verify?: boolean
+// ) => {
+//   const instance = await withSaveAndVerify(
+//     await new MockATokenFactory(await getFirstSigner()).deploy(),
+//     eContractid.MockAToken,
+//     [],
+//     verify
+//   );
 
-  await instance.initialize(args[0], args[2], args[1], args[3], '18', args[4], args[5], args[6]);
+//   await instance.initialize(args[0], args[2], args[1], args[3], '18', args[4], args[5], args[6]);
 
-  return instance;
-};
+//   return instance;
+// };
 
-export const deploySelfdestructTransferMock = async (verify?: boolean) =>
-  withSaveAndVerify(
-    await new SelfdestructTransferFactory(await getFirstSigner()).deploy(),
-    eContractid.SelfdestructTransferMock,
-    [],
-    verify
-  );
+// export const deploySelfdestructTransferMock = async (verify?: boolean) =>
+//   withSaveAndVerify(
+//     await new SelfdestructTransferFactory(await getFirstSigner()).deploy(),
+//     eContractid.SelfdestructTransferMock,
+//     [],
+//     verify
+//   );
 
-export const deployMockUniswapRouter = async (verify?: boolean) =>
-  withSaveAndVerify(
-    await new MockUniswapV2Router02Factory(await getFirstSigner()).deploy(),
-    eContractid.MockUniswapV2Router02,
-    [],
-    verify
-  );
+// export const deployMockUniswapRouter = async (verify?: boolean) =>
+//   withSaveAndVerify(
+//     await new MockUniswapV2Router02Factory(await getFirstSigner()).deploy(),
+//     eContractid.MockUniswapV2Router02,
+//     [],
+//     verify
+//   );
 
-export const deployUniswapLiquiditySwapAdapter = async (
-  args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
-  verify?: boolean
-) =>
-  withSaveAndVerify(
-    await new UniswapLiquiditySwapAdapterFactory(await getFirstSigner()).deploy(...args),
-    eContractid.UniswapLiquiditySwapAdapter,
-    args,
-    verify
-  );
+// export const deployUniswapLiquiditySwapAdapter = async (
+//   args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new UniswapLiquiditySwapAdapterFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.UniswapLiquiditySwapAdapter,
+//     args,
+//     verify
+//   );
 
-export const deployUniswapRepayAdapter = async (
-  args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
-  verify?: boolean
-) =>
-  withSaveAndVerify(
-    await new UniswapRepayAdapterFactory(await getFirstSigner()).deploy(...args),
-    eContractid.UniswapRepayAdapter,
-    args,
-    verify
-  );
+// export const deployUniswapRepayAdapter = async (
+//   args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new UniswapRepayAdapterFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.UniswapRepayAdapter,
+//     args,
+//     verify
+//   );
 
-export const deployFlashLiquidationAdapter = async (
-  args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
-  verify?: boolean
-) =>
-  withSaveAndVerify(
-    await new FlashLiquidationAdapterFactory(await getFirstSigner()).deploy(...args),
-    eContractid.FlashLiquidationAdapter,
-    args,
-    verify
-  );
+// export const deployFlashLiquidationAdapter = async (
+//   args: [tEthereumAddress, tEthereumAddress, tEthereumAddress],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new FlashLiquidationAdapterFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.FlashLiquidationAdapter,
+//     args,
+//     verify
+//   );
 
 export const chooseATokenDeployment = (id: eContractid) => {
   switch (id) {
     case eContractid.AToken:
       return deployGenericATokenImpl;
-    case eContractid.DelegationAwareAToken:
-      return deployDelegationAwareATokenImpl;
+    // case eContractid.DelegationAwareAToken:
+    //   return deployDelegationAwareATokenImpl;
     default:
       throw Error(`Missing aToken implementation deployment script for: ${id}`);
   }
@@ -762,32 +800,89 @@ export const deployRateStrategy = async (
       ).address;
   }
 };
-export const deployMockParaSwapAugustus = async (verify?: boolean) =>
-  withSaveAndVerify(
-    await new MockParaSwapAugustusFactory(await getFirstSigner()).deploy(),
-    eContractid.MockParaSwapAugustus,
-    [],
-    verify
-  );
+// export const deployMockParaSwapAugustus = async (verify?: boolean) =>
+//   withSaveAndVerify(
+//     await new MockParaSwapAugustusFactory(await getFirstSigner()).deploy(),
+//     eContractid.MockParaSwapAugustus,
+//     [],
+//     verify
+//   );
 
-export const deployMockParaSwapAugustusRegistry = async (
-  args: [tEthereumAddress],
-  verify?: boolean
-) =>
+// export const deployMockParaSwapAugustusRegistry = async (
+//   args: [tEthereumAddress],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new MockParaSwapAugustusRegistryFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.MockParaSwapAugustusRegistry,
+//     args,
+//     verify
+//   );
+
+// export const deployParaSwapLiquiditySwapAdapter = async (
+//   args: [tEthereumAddress, tEthereumAddress],
+//   verify?: boolean
+// ) =>
+//   withSaveAndVerify(
+//     await new ParaSwapLiquiditySwapAdapterFactory(await getFirstSigner()).deploy(...args),
+//     eContractid.ParaSwapLiquiditySwapAdapter,
+//     args,
+//     verify
+//   );
+
+export const deployToreusToken = async (args: [string], verify?: boolean) =>
   withSaveAndVerify(
-    await new MockParaSwapAugustusRegistryFactory(await getFirstSigner()).deploy(...args),
-    eContractid.MockParaSwapAugustusRegistry,
+    await new ToreusTokenFactory(await getFirstSigner()).deploy(...args),
+    eContractid.ToreusToken,
     args,
     verify
   );
 
-export const deployParaSwapLiquiditySwapAdapter = async (
-  args: [tEthereumAddress, tEthereumAddress],
+export const deployMultiFeeDistribution = async (args: [tEthereumAddress], verify?: boolean) =>
+  withSaveAndVerify(
+    await new MultiFeeDistributionFactory(await getFirstSigner()).deploy(...args),
+    eContractid.MultiFeeDistribution,
+    args,
+    verify
+  );
+
+export const deployChefIncentivesController = async (
+  args: [string[], string[], tEthereumAddress, tEthereumAddress, string],
   verify?: boolean
 ) =>
   withSaveAndVerify(
-    await new ParaSwapLiquiditySwapAdapterFactory(await getFirstSigner()).deploy(...args),
-    eContractid.ParaSwapLiquiditySwapAdapter,
+    await new ChefIncentivesControllerFactory(await getFirstSigner()).deploy(...args),
+    eContractid.ChefIncentivesController,
+    args,
+    verify
+  );
+
+export const deployMasterChef = async (
+  args: [string[], string[], tEthereumAddress, tEthereumAddress, string],
+  verify?: boolean
+) =>
+  withSaveAndVerify(
+    await new MasterChefFactory(await getFirstSigner()).deploy(...args),
+    eContractid.MasterChef,
+    args,
+    verify
+  );
+
+export const deployMerkleDistributor = async (args: [tEthereumAddress, string], verify?: boolean) =>
+  withSaveAndVerify(
+    await new MerkleDistributorFactory(await getFirstSigner()).deploy(...args),
+    eContractid.MerkleDistributor,
+    args,
+    verify
+  );
+
+export const deployTokenVesting = async (
+  args: [tEthereumAddress, string, string[], string[]],
+  verify?: boolean
+) =>
+  withSaveAndVerify(
+    await new TokenVestingFactory(await getFirstSigner()).deploy(...args),
+    eContractid.TokenVesting,
     args,
     verify
   );

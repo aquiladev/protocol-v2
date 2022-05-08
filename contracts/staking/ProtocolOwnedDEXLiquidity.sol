@@ -87,7 +87,7 @@ contract ProtocolOwnedDEXLiquidity is Ownable {
     superPODLCooldown = _podlCooldown;
   }
 
-  function protocolOwnedReserves() public view returns (uint256 wftm, uint256 geist) {
+  function protocolOwnedReserves() public view returns (uint256 wftm, uint256 token) {
     (uint256 reserve0, uint256 reserve1, ) = lpToken.getReserves();
     uint256 balance = lpToken.balanceOf(address(this));
     uint256 totalSupply = lpToken.totalSupply();
@@ -139,7 +139,7 @@ contract ProtocolOwnedDEXLiquidity is Ownable {
   }
 
   function superPODL(uint256 _amount) public {
-    require(treasury.lockedBalances(msg.sender) >= minSuperPODLLock, 'Need to lock GEIST!');
+    require(treasury.lockedBalances(msg.sender) >= minSuperPODLLock, 'Need to lock TOREUS!');
     _buy(_amount, superPODLCooldown);
     emit AaaaaaahAndImSuperPODLiiiiing(msg.sender, _amount);
   }

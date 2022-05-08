@@ -104,7 +104,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
         )
       );
     // stableDebt is not added to incentives controller
-    // GEIST does not support stable lending
+    // TOREUS does not support stable lending
 
     address variableDebtTokenProxyAddress =
       _initTokenWithProxy(

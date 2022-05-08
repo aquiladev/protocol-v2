@@ -13,26 +13,27 @@ import {
   LendingPoolFactory,
   LendingRateOracleFactory,
   MintableERC20Factory,
-  MockATokenFactory,
+  // MockATokenFactory,
   MockFlashLoanReceiverFactory,
-  MockStableDebtTokenFactory,
-  MockVariableDebtTokenFactory,
-  MockUniswapV2Router02Factory,
-  MockParaSwapAugustusFactory,
-  MockParaSwapAugustusRegistryFactory,
-  ParaSwapLiquiditySwapAdapterFactory,
+  // MockStableDebtTokenFactory,
+  // MockVariableDebtTokenFactory,
+  // MockUniswapV2Router02Factory,
+  // MockParaSwapAugustusFactory,
+  // MockParaSwapAugustusRegistryFactory,
+  // ParaSwapLiquiditySwapAdapterFactory,
   PriceOracleFactory,
   ReserveLogicFactory,
-  SelfdestructTransferFactory,
+  // SelfdestructTransferFactory,
   StableAndVariableTokensHelperFactory,
   StableDebtTokenFactory,
-  UniswapLiquiditySwapAdapterFactory,
-  UniswapRepayAdapterFactory,
+  // UniswapLiquiditySwapAdapterFactory,
+  // UniswapRepayAdapterFactory,
   VariableDebtTokenFactory,
   WalletBalanceProviderFactory,
   WETH9MockedFactory,
   WETHGatewayFactory,
-  FlashLiquidationAdapterFactory,
+  // ToreusTokenFactory,
+  // FlashLiquidationAdapterFactory,
 } from '../types';
 import { IERC20DetailedFactory } from '../types/IERC20DetailedFactory';
 import { getEthersSigners, MockTokenMap } from './contracts-helpers';
@@ -228,6 +229,28 @@ export const getPairsTokenAggregator = (
   return [mappedPairs, mappedAggregators];
 };
 
+export const getPairsTokenPriceFeed = (
+  allAssetsAddresses: {
+    [tokenSymbol: string]: tEthereumAddress;
+  },
+  priceFeedsAddresses: { [tokenSymbol: string]: tEthereumAddress }
+): [string[], string[]] => {
+  const pairs = Object.entries(allAssetsAddresses).map(([tokenSymbol, tokenAddress]) => {
+    const feedAddressIndex = Object.keys(priceFeedsAddresses).findIndex(
+      (value) => value === tokenSymbol
+    );
+    const [, priceFeedAddress] = (
+      Object.entries(priceFeedsAddresses) as [string, tEthereumAddress][]
+    )[feedAddressIndex];
+    return [tokenAddress, priceFeedAddress];
+  }) as [string, string][];
+
+  const mappedPairs = pairs.map(([asset]) => asset);
+  const mappedPriceFeeds = pairs.map(([, source]) => source);
+
+  return [mappedPairs, mappedPriceFeeds];
+};
+
 export const getLendingPoolAddressesProviderRegistry = async (address?: tEthereumAddress) =>
   await LendingPoolAddressesProviderRegistryFactory.connect(
     notFalsyOrZeroAddress(address)
@@ -293,38 +316,38 @@ export const getWETHMocked = async (address?: tEthereumAddress) =>
     await getFirstSigner()
   );
 
-export const getMockAToken = async (address?: tEthereumAddress) =>
-  await MockATokenFactory.connect(
-    address || (await getDb().get(`${eContractid.MockAToken}.${DRE.network.name}`).value()).address,
-    await getFirstSigner()
-  );
+// export const getMockAToken = async (address?: tEthereumAddress) =>
+//   await MockATokenFactory.connect(
+//     address || (await getDb().get(`${eContractid.MockAToken}.${DRE.network.name}`).value()).address,
+//     await getFirstSigner()
+//   );
 
-export const getMockVariableDebtToken = async (address?: tEthereumAddress) =>
-  await MockVariableDebtTokenFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.MockVariableDebtToken}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getMockVariableDebtToken = async (address?: tEthereumAddress) =>
+//   await MockVariableDebtTokenFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.MockVariableDebtToken}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getMockStableDebtToken = async (address?: tEthereumAddress) =>
-  await MockStableDebtTokenFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.MockStableDebtToken}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getMockStableDebtToken = async (address?: tEthereumAddress) =>
+//   await MockStableDebtTokenFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.MockStableDebtToken}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getSelfdestructTransferMock = async (address?: tEthereumAddress) =>
-  await SelfdestructTransferFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.SelfdestructTransferMock}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getSelfdestructTransferMock = async (address?: tEthereumAddress) =>
+//   await SelfdestructTransferFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.SelfdestructTransferMock}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
 export const getProxy = async (address: tEthereumAddress) =>
   await InitializableAdminUpgradeabilityProxyFactory.connect(address, await getFirstSigner());
@@ -385,62 +408,72 @@ export const getAaveOracle = async (address?: tEthereumAddress) =>
     await getFirstSigner()
   );
 
-export const getMockUniswapRouter = async (address?: tEthereumAddress) =>
-  await MockUniswapV2Router02Factory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.MockUniswapV2Router02}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getMockUniswapRouter = async (address?: tEthereumAddress) =>
+//   await MockUniswapV2Router02Factory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.MockUniswapV2Router02}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getUniswapLiquiditySwapAdapter = async (address?: tEthereumAddress) =>
-  await UniswapLiquiditySwapAdapterFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.UniswapLiquiditySwapAdapter}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getUniswapLiquiditySwapAdapter = async (address?: tEthereumAddress) =>
+//   await UniswapLiquiditySwapAdapterFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.UniswapLiquiditySwapAdapter}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getUniswapRepayAdapter = async (address?: tEthereumAddress) =>
-  await UniswapRepayAdapterFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.UniswapRepayAdapter}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getUniswapRepayAdapter = async (address?: tEthereumAddress) =>
+//   await UniswapRepayAdapterFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.UniswapRepayAdapter}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getFlashLiquidationAdapter = async (address?: tEthereumAddress) =>
-  await FlashLiquidationAdapterFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.FlashLiquidationAdapter}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
+// export const getFlashLiquidationAdapter = async (address?: tEthereumAddress) =>
+//   await FlashLiquidationAdapterFactory.connect(
+//     address ||
+//       (
+//         await getDb().get(`${eContractid.FlashLiquidationAdapter}.${DRE.network.name}`).value()
+//       ).address,
+//     await getFirstSigner()
+//   );
 
-export const getMockParaSwapAugustus = async (address?: tEthereumAddress) =>
-  await MockParaSwapAugustusFactory.connect(
-    address ||
-      (await getDb().get(`${eContractid.MockParaSwapAugustus}.${DRE.network.name}`).value())
-        .address,
-    await getFirstSigner()
-  );
+// export const getMockParaSwapAugustus = async (address?: tEthereumAddress) =>
+//   await MockParaSwapAugustusFactory.connect(
+//     address ||
+//       (await getDb().get(`${eContractid.MockParaSwapAugustus}.${DRE.network.name}`).value())
+//         .address,
+//     await getFirstSigner()
+//   );
 
-export const getMockParaSwapAugustusRegistry = async (address?: tEthereumAddress) =>
-  await MockParaSwapAugustusRegistryFactory.connect(
-    address ||
-      (await getDb().get(`${eContractid.MockParaSwapAugustusRegistry}.${DRE.network.name}`).value())
-        .address,
-    await getFirstSigner()
-  );
+// export const getMockParaSwapAugustusRegistry = async (address?: tEthereumAddress) =>
+//   await MockParaSwapAugustusRegistryFactory.connect(
+//     address ||
+//       (await getDb().get(`${eContractid.MockParaSwapAugustusRegistry}.${DRE.network.name}`).value())
+//         .address,
+//     await getFirstSigner()
+//   );
 
-export const getParaSwapLiquiditySwapAdapter = async (address?: tEthereumAddress) =>
-  await ParaSwapLiquiditySwapAdapterFactory.connect(
-    address ||
-      (await getDb().get(`${eContractid.ParaSwapLiquiditySwapAdapter}.${DRE.network.name}`).value())
-        .address,
-    await getFirstSigner()
-  );
+// export const getParaSwapLiquiditySwapAdapter = async (address?: tEthereumAddress) =>
+//   await ParaSwapLiquiditySwapAdapterFactory.connect(
+//     address ||
+//       (await getDb().get(`${eContractid.ParaSwapLiquiditySwapAdapter}.${DRE.network.name}`).value())
+//         .address,
+//     await getFirstSigner()
+//   );
+
+export const getTreasuryAddress = async () =>
+  await (
+    await getDb().get(`${eContractid.MultiFeeDistribution}.${DRE.network.name}`).value()
+  ).address;
+
+export const getIncentivesControllerAddress = async () =>
+  await (
+    await getDb().get(`${eContractid.ChefIncentivesController}.${DRE.network.name}`).value()
+  ).address;

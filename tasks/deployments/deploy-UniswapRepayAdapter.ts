@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 
-import { UniswapRepayAdapterFactory } from '../../types';
+// import { UniswapRepayAdapterFactory } from '../../types';
 import { verifyContract } from '../../helpers/contracts-helpers';
 import { getFirstSigner } from '../../helpers/contracts-getters';
 import { eContractid } from '../../helpers/types';
@@ -24,21 +24,21 @@ task(`deploy-${CONTRACT_NAME}`, `Deploys the ${CONTRACT_NAME} contract`)
     //   '0x88757f2f99175387aB4C6a4b3067c77A695b0349', // lending  provider kovan address
     //   '0xfcd87315f0e4067070ade8682fcdbc3006631441', // uniswap router address
     // ];
-    const uniswapRepayAdapter = await new UniswapRepayAdapterFactory(await getFirstSigner()).deploy(
-      provider,
-      router,
-      weth
-    );
-    await uniswapRepayAdapter.deployTransaction.wait();
-    console.log(`${CONTRACT_NAME}.address`, uniswapRepayAdapter.address);
+    // const uniswapRepayAdapter = await new UniswapRepayAdapterFactory(await getFirstSigner()).deploy(
+    //   provider,
+    //   router,
+    //   weth
+    // );
+    // await uniswapRepayAdapter.deployTransaction.wait();
+    // console.log(`${CONTRACT_NAME}.address`, uniswapRepayAdapter.address);
 
-    if (verify) {
-      await verifyContract(eContractid.UniswapRepayAdapter, uniswapRepayAdapter, [
-        provider,
-        router,
-        weth,
-      ]);
-    }
+    // if (verify) {
+    //   await verifyContract(eContractid.UniswapRepayAdapter, uniswapRepayAdapter, [
+    //     provider,
+    //     router,
+    //     weth,
+    //   ]);
+    // }
 
     console.log(
       `\tFinished ${CONTRACT_NAME}${CONTRACT_NAME}lDataProvider proxy and implementation deployment`
